@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardian Dragon</title>
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+background:#020617;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+font-family:Arial;
+color:white;
+text-align:center;
+overflow:hidden;
+}
+
+/* stars */
+
+.star{
+position:absolute;
+width:2px;
+height:2px;
+background:white;
+border-radius:50%;
+}
+
+/* egg */
+
+#egg{
+width:140px;
+height:180px;
+background:linear-gradient(#fff7cc,#facc15);
+border-radius:70% 70% 60% 60%;
+box-shadow:0 0 20px #facc15;
+display:none;
+cursor:pointer;
+animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+}
+
+/* dragon */
+
+#dragon{
+display:none;
+font-size:90px;
+position:absolute;
+cursor:pointer;
+animation:float 3s infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-18px)}
+}
+
+/* spark particles */
+
+.spark{
+position:absolute;
+width:6px;
+height:6px;
+background:gold;
+border-radius:50%;
+animation:spark 1s forwards;
+}
+
+@keyframes spark{
+0%{opacity:1}
+100%{opacity:0; transform:translateY(-80px)}
+}
+
+/* fire breath */
+
+.fire{
+position:absolute;
+font-size:40px;
+animation:fire 0.6s forwards;
+}
+
+@keyframes fire{
+0%{opacity:1; transform:scale(1)}
+100%{opacity:0; transform:translateY(-60px) scale(1.5)}
+}
+
+#text{
+margin-top:20px;
+font-size:22px;
+max-width:80%;
+}
+
+input{
+padding:10px;
+font-size:16px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px 18px;
+font-size:16px;
+border:none;
+border-radius:8px;
+background:#7c3aed;
+color:white;
+margin-left:10px;
+cursor:pointer;
+}
+
+#nameBox{
+display:none;
+margin-top:20px;
+}
+
+#feedBtn{
+display:none;
+margin-top:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="intro">
+Dark forces are rising...<br><br>
+LORD DYNAMIS has sent a guardian dragon.
+</div>
+
+<div id="egg"></div>
+
+<div id="dragon">🐉</div>
+
+<div id="text"></div>
+
+<div id="nameBox">
+<input id="dragonName" placeholder="Name your dragon">
+<button onclick="nameDragon()">Name</button>
+</div>
+
+<button id="feedBtn" onclick="feedDragon()">🍎 Feed Dragon</button>
+
+<script>
+
+let egg=document.getElementById("egg")
+let dragon=document.getElementById("dragon")
+let text=document.getElementById("text")
+
+let taps=0
+
+/* star background */
+
+for(let i=0;i<120;i++){
+let star=document.createElement("div")
+star.className="star"
+star.style.left=Math.random()*100+"vw"
+star.style.top=Math.random()*100+"vh"
+document.body.appendChild(star)
+}
+
+/* intro */
+
+setTimeout(()=>{
+
+document.getElementById("intro").style.display="none"
+egg.style.display="block"
+
+text.innerHTML="Tap the egg 3 times to hatch the guardian dragon"
+
+},4000)
+
+/* egg taps */
+
+egg.onclick=function(){
+
+taps++
+
+if(taps==1){
+text.innerHTML="The egg is glowing..."
+}
+
+if(taps==2){
+text.innerHTML="Cracks are forming..."
+}
+
+if(taps==3){
+
+egg.style.display="none"
+
+createSpark()
+
+dragon.style.display="block"
+
+text.innerHTML="A baby dragon hatched! LORD DYNAMIS sent me to protect you from the evil. What will you name me?"
+
+document.getElementById("nameBox").style.display="block"
+
+}
+
+}
+
+/* spark burst */
+
+function createSpark(){
+
+for(let i=0;i<25;i++){
+
+let s=document.createElement("div")
+s.className="spark"
+
+s.style.left=Math.random()*100+"vw"
+s.style.top=Math.random()*100+"vh"
+
+document.body.appendChild(s)
+
+setTimeout(()=>s.remove(),1000)
+
+}
+
+}
+
+/* name dragon */
+
+function nameDragon(){
+
+let name=document.getElementById("dragonName").value
+
+if(name.trim()==""){
+alert("Your dragon needs a name!")
+return
+}
+
+localStorage.setItem("dragonName",name)
+
+text.innerHTML="Hello! I am "+name+" 🐉. LORD DYNAMIS sent me to protect you from the evil."
+
+document.getElementById("nameBox").style.display="none"
+document.getElementById("feedBtn").style.display="block"
+
+}
+
+/* feed dragon */
+
+function feedDragon(){
+
+let name=localStorage.getItem("dragonName")
+
+text.innerHTML=name+" happily eats the food! 🐉🍎"
+
+}
+
+/* fire breathing */
+
+dragon.onclick=function(){
+
+let fire=document.createElement("div")
+
+fire.innerHTML="🔥"
+fire.className="fire"
+
+fire.style.left=dragon.offsetLeft+60+"px"
+fire.style.top=dragon.offsetTop+"px"
+
+document.body.appendChild(fire)
+
+setTimeout(()=>fire.remove(),600)
+
+}
+
+/* dragon follows finger */
+
+document.addEventListener("mousemove",moveDragon)
+document.addEventListener("touchmove",moveDragon)
+
+function moveDragon(e){
+
+if(dragon.style.display!="block") return
+
+let x = e.touches ? e.touches[0].clientX : e.clientX
+let y = e.touches ? e.touches[0].clientY : e.clientY
+
+dragon.style.left=(x-50)+"px"
+dragon.style.top=(y-50)+"px"
+
+}
+
+</script>
+
+</body>
+</html>
